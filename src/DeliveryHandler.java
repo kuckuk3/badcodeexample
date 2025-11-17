@@ -17,7 +17,6 @@ public class DeliveryHandler {
         return dh;
     }
 
-    // Schedule delivery - has duplicate logic from elsewhere
     public void scheduleDelivery(int orderId, int estimatedMinutes) {
         dIds[dc] = orderId;
         dTimes[dc] = estimatedMinutes;
@@ -25,7 +24,6 @@ public class DeliveryHandler {
         dc++;
     }
 
-    // Assign driver - overly complex for simple task
     public boolean assignDriver(int deliveryIndex, String driverName) {
         if (deliveryIndex < 0 || deliveryIndex >= dc) {
             return false;
@@ -40,7 +38,6 @@ public class DeliveryHandler {
         return false;
     }
 
-    // Calculate delivery fee with hidden logic
     public double calculateDeliveryFee(int orderId) {
         Pizza p = om.getOrder(orderId);
         Customer c = om.getCustomer(orderId);
@@ -70,7 +67,6 @@ public class DeliveryHandler {
         return Math.round(fee * 100.0) / 100.0;
     }
 
-    // Process multiple deliveries - deeply nested loops
     public void processDeliveries() {
         for (int i = 0; i < dc; i++) {
             if (dStatuses[i] != null) {
@@ -92,7 +88,6 @@ public class DeliveryHandler {
         }
     }
 
-    // Get delivery info - returns array instead of object
     public int[] getDeliveryInfo(int index) {
         int[] info = new int[3];
         info[0] = dIds[index];
@@ -101,7 +96,6 @@ public class DeliveryHandler {
         return info;
     }
 
-    // Poorly named method that does multiple things
     public String checkStuff(int index) {
         String result = "";
         result = result + "Order ID: " + dIds[index] + "\n";
@@ -114,7 +108,6 @@ public class DeliveryHandler {
         return dc;
     }
 
-    // Copy of validation logic from OrderManager
     public boolean validateForDelivery(int orderId) {
         Pizza p = om.getOrder(orderId);
         Customer c = om.getCustomer(orderId);
@@ -127,7 +120,6 @@ public class DeliveryHandler {
         return true;
     }
 
-    // Another copy of status checking
     public String getDeliveryStatus(int index) {
         if (index >= 0 && index < dc) {
             return dStatuses[index];
@@ -135,23 +127,19 @@ public class DeliveryHandler {
         return "UNKNOWN";
     }
 
-    // Method with magic numbers
     public void estimateDeliveryTime(int orderId, int baseMinutes) {
         Pizza p = om.getOrder(orderId);
         
         int finalTime = baseMinutes;
         
-        // Magic number 5 - what does it mean?
         if (p.getSz().getD() > 25) {
             finalTime = finalTime + 5;
         }
         
-        // Magic number 3
         if (p.isH()) {
             finalTime = finalTime + 3;
         }
         
-        // Magic number 2
         if (p.getIng().length > 6) {
             finalTime = finalTime + 2;
         }

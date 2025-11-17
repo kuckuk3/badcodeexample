@@ -80,7 +80,6 @@ public class RestaurantSystem {
         menu.put(key, p);
     }
 
-    // Place order - this method has hidden complexity
     public int placeOrder(String pizzaKey, String customerName, String address, String phone) {
         return placeOrderWithOptions(pizzaKey, customerName, address, phone, false);
     }
@@ -98,7 +97,6 @@ public class RestaurantSystem {
         Pizza menuPizza = menu.get(pizzaKey);
         Pizza orderPizza = new Pizza(menuPizza.getN(), menuPizza.getSz(), menuPizza.getBp());
         
-        // Copy ingredients (redundant logic)
         for (Ingredient ing : menuPizza.getIng()) {
             orderPizza.addIng(ing);
         }
@@ -118,7 +116,6 @@ public class RestaurantSystem {
         return orderId;
     }
 
-    // Process workflow - deeply nested conditions
     public void processWorkflow(int orderId) {
         if (om.validate(orderId)) {
             if (om.getOrder(orderId) != null) {

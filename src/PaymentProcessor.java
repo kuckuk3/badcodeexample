@@ -19,7 +19,6 @@ public class PaymentProcessor {
         }
     }
 
-    // Process payment - returns integer status code instead of enum
     public int processPayment(int orderId, String paymentMethod, double amount) {
         if (orderId < 0 || amount <= 0 || paymentMethod == null) {
             return -1; // ERROR
@@ -31,7 +30,6 @@ public class PaymentProcessor {
             return 0; // INVALID_ORDER
         }
 
-        // Complex nested conditions
         if (paymentMethod.equalsIgnoreCase("CREDIT_CARD")) {
             if (validateCreditCard(amount)) {
                 if (processCardPayment(amount)) {
@@ -58,7 +56,6 @@ public class PaymentProcessor {
         return -2; // UNKNOWN_METHOD
     }
 
-    // Helper methods with obvious names and simple logic (but used in complex flow)
     private boolean validateCreditCard(double amount) {
         return amount > 0 && amount < 1000;
     }
@@ -80,7 +77,6 @@ public class PaymentProcessor {
         tc++;
     }
 
-    // Calculate total with many hidden charges
     public double calculateTotal(int orderId) {
         OrderManager om = OrderManager.getInstance();
         Pizza p = om.getOrder(orderId);
@@ -95,7 +91,6 @@ public class PaymentProcessor {
         double delivery = DELIVERY_SURCHARGE;
         double discount = 0;
 
-        // Hidden business logic
         if (c.getLc() >= LOYALTY_DISCOUNT_THRESHOLD) {
             discount = subtotal * LOYALTY_DISCOUNT_PERCENT;
         }
@@ -103,7 +98,6 @@ public class PaymentProcessor {
         return subtotal + tax + delivery - discount;
     }
 
-    // Generate receipt - string concatenation instead of StringBuilder
     public String generateReceipt(int orderId) {
         OrderManager om = OrderManager.getInstance();
         Pizza p = om.getOrder(orderId);
@@ -140,25 +134,17 @@ public class PaymentProcessor {
         return receipt;
     }
 
-    // Refund logic with repeated validation
     public boolean refundPayment(int transactionIndex, String reason) {
         if (transactionIndex < 0 || transactionIndex >= tc) {
             return false;
         }
 
-        if (reason == null || reason.isEmpty()) {
-            return false;
-        }
-
-        // Duplicate validation
         if (amounts[transactionIndex] <= 0) {
             return false;
         }
 
-        // Process refund
         stats[transactionIndex] = "REFUNDED";
 
-        // Additional business logic
         if (reason.equalsIgnoreCase("CUSTOMER_REQUEST")) {
             // Do something
         } else if (reason.equalsIgnoreCase("ORDER_CANCELLED")) {
@@ -170,7 +156,6 @@ public class PaymentProcessor {
         return true;
     }
 
-    // Get transaction history - uses array index directly
     public String getTransactionHistory() {
         String history = "";
         for (int i = 0; i < tc; i++) {

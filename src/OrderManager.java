@@ -30,7 +30,6 @@ public class OrderManager {
         return instance;
     }
 
-    // Add order with basic details
     public int newOrder(Pizza p, Customer c) {
         om.put(odc, p);
         cm.put(odc, c);
@@ -87,7 +86,6 @@ public class OrderManager {
         return subtotal + tax;
     }
 
-    // Complex validation that's hard to follow
     public boolean validate(int id) {
         Pizza p = om.get(id);
         Customer c = cm.get(id);
@@ -103,7 +101,6 @@ public class OrderManager {
         // Check ingredients
         if (!p.verifyIngredients()) return false;
         
-        // Deep nested condition
         if (st[id] == 0) {
             if (p.isH()) {
                 if (p.getSz().getD() > 30) {
@@ -118,7 +115,6 @@ public class OrderManager {
         return false;
     }
 
-    // Get formatted order info
     public String formatOrder(int id) {
         Pizza p = om.get(id);
         Customer c = cm.get(id);
@@ -162,7 +158,6 @@ public class OrderManager {
         return odc;
     }
 
-    // Additional methods that repeat logic
     public boolean canPrepare(int id) {
         return st[id] == 0 && validate(id);
     }
