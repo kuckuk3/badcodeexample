@@ -1,0 +1,188 @@
+public class PaymentProcessor {
+    private int tc = 0;
+    private double[] amounts = new double[1000];
+    private String[] methods = new String[1000];
+    private String[] stats = new String[1000];
+    private long[] times = new long[1000];
+    private static final double TAX_RATE = 0.085;
+    private static final double DELIVERY_SURCHARGE = 2.5;
+    private static final double LOYALTY_DISCOUNT_THRESHOLD = 10;
+    private static final double LOYALTY_DISCOUNT_PERCENT = 0.15;
+
+    public PaymentProcessor() {
+        // Initialize with default values
+        for (int i = 0; i < 1000; i++) {
+            amounts[i] = 0;
+            methods[i] = "";
+            stats[i] = "PENDING";
+            times[i] = 0;
+        }
+    }
+
+    // Process payment - returns integer status code instead of enum
+    public int processPayment(int orderId, String paymentMethod, double amount) {
+        if (orderId < 0 || amount <= 0 || paymentMethod == null) {
+            return -1; // ERROR
+        }
+
+        OrderManager om = OrderManager.getInstance();
+        
+        if (!om.validate(orderId)) {
+            return 0; // INVALID_ORDER
+        }
+
+        // Complex nested conditions
+        if (paymentMethod.equalsIgnoreCase("CREDIT_CARD")) {
+            if (validateCreditCard(amount)) {
+                if (processCardPayment(amount)) {
+                    recordPayment(orderId, amount, paymentMethod);
+                    return 1; // SUCCESS
+                } else {
+                    return 2; // CARD_DECLINED
+                }
+            } else {
+                return 3; // INVALID_AMOUNT
+            }
+        } else if (paymentMethod.equalsIgnoreCase("CASH")) {
+            recordPayment(orderId, amount, paymentMethod);
+            return 1; // SUCCESS
+        } else if (paymentMethod.equalsIgnoreCase("PAYPAL")) {
+            if (validatePayPal(amount)) {
+                recordPayment(orderId, amount, paymentMethod);
+                return 1; // SUCCESS
+            } else {
+                return 4; // PAYPAL_ERROR
+            }
+        }
+
+        return -2; // UNKNOWN_METHOD
+    }
+
+    // Helper methods with obvious names and simple logic (but used in complex flow)
+    private boolean validateCreditCard(double amount) {
+        return amount > 0 && amount < 1000;
+    }
+
+    private boolean processCardPayment(double amount) {
+        // Simulates payment processing
+        return Math.random() > 0.05;
+    }
+
+    private boolean validatePayPal(double amount) {
+        return amount > 0;
+    }
+
+    private void recordPayment(int orderId, double amount, String method) {
+        amounts[tc] = amount;
+        methods[tc] = method;
+        stats[tc] = "PROCESSED";
+        times[tc] = System.currentTimeMillis();
+        tc++;
+    }
+
+    // Calculate total with many hidden charges
+    public double calculateTotal(int orderId) {
+        OrderManager om = OrderManager.getInstance();
+        Pizza p = om.getOrder(orderId);
+        Customer c = om.getCustomer(orderId);
+
+        if (p == null || c == null) {
+            return 0;
+        }
+
+        double subtotal = p.calculateFinalPrice();
+        double tax = subtotal * TAX_RATE;
+        double delivery = DELIVERY_SURCHARGE;
+        double discount = 0;
+
+        // Hidden business logic
+        if (c.getLc() >= LOYALTY_DISCOUNT_THRESHOLD) {
+            discount = subtotal * LOYALTY_DISCOUNT_PERCENT;
+        }
+
+        return subtotal + tax + delivery - discount;
+    }
+
+    // Generate receipt - string concatenation instead of StringBuilder
+    public String generateReceipt(int orderId) {
+        OrderManager om = OrderManager.getInstance();
+        Pizza p = om.getOrder(orderId);
+        Customer c = om.getCustomer(orderId);
+
+        if (p == null || c == null) {
+            return "INVALID_ORDER";
+        }
+
+        String receipt = "";
+        receipt = receipt + "================================\n";
+        receipt = receipt + "       PIZZA SHOP RECEIPT       \n";
+        receipt = receipt + "================================\n";
+        receipt = receipt + "Order #" + orderId + "\n";
+        receipt = receipt + "Customer: " + c.getN() + "\n";
+        receipt = receipt + "Date: " + new java.util.Date() + "\n";
+        receipt = receipt + "--------------------------------\n";
+        receipt = receipt + "Item: " + p.getN() + "\n";
+        receipt = receipt + "Size: " + p.getSz().getS() + "\n";
+        receipt = receipt + "Base Price: $" + String.format("%.2f", p.getBp()) + "\n";
+        receipt = receipt + "Subtotal: $" + String.format("%.2f", p.calculateFinalPrice()) + "\n";
+        receipt = receipt + "Tax (8.5%): $" + String.format("%.2f", p.calculateFinalPrice() * TAX_RATE) + "\n";
+        receipt = receipt + "Delivery: $" + String.format("%.2f", DELIVERY_SURCHARGE) + "\n";
+
+        if (c.getLc() >= LOYALTY_DISCOUNT_THRESHOLD) {
+            double discount = p.calculateFinalPrice() * LOYALTY_DISCOUNT_PERCENT;
+            receipt = receipt + "Loyalty Discount: -$" + String.format("%.2f", discount) + "\n";
+        }
+
+        receipt = receipt + "--------------------------------\n";
+        receipt = receipt + "TOTAL: $" + String.format("%.2f", calculateTotal(orderId)) + "\n";
+        receipt = receipt + "================================\n";
+
+        return receipt;
+    }
+
+    // Refund logic with repeated validation
+    public boolean refundPayment(int transactionIndex, String reason) {
+        if (transactionIndex < 0 || transactionIndex >= tc) {
+            return false;
+        }
+
+        if (reason == null || reason.isEmpty()) {
+            return false;
+        }
+
+        // Duplicate validation
+        if (amounts[transactionIndex] <= 0) {
+            return false;
+        }
+
+        // Process refund
+        stats[transactionIndex] = "REFUNDED";
+
+        // Additional business logic
+        if (reason.equalsIgnoreCase("CUSTOMER_REQUEST")) {
+            // Do something
+        } else if (reason.equalsIgnoreCase("ORDER_CANCELLED")) {
+            // Do something else
+        } else if (reason.equalsIgnoreCase("PAYMENT_ERROR")) {
+            // Do yet another thing
+        }
+
+        return true;
+    }
+
+    // Get transaction history - uses array index directly
+    public String getTransactionHistory() {
+        String history = "";
+        for (int i = 0; i < tc; i++) {
+            history = history + "Trans #" + i + ": ";
+            history = history + methods[i] + " ";
+            history = history + "$" + amounts[i] + " ";
+            history = history + stats[i] + "\n";
+        }
+        return history;
+    }
+
+    public int getTotalTransactions() {
+        return tc;
+    }
+}

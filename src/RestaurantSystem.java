@@ -1,189 +1,251 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
 public class RestaurantSystem {
-    // this is the main class for handling everything
     private OrderManager om;
-    private Pizza[] p_array = new Pizza[100];
-    private int p_count = 0;
+    private Map<String, Pizza> menu;
+    private Map<String, Ingredient> ingredients;
+    private Map<String, Customer> customers;
+    private int ocount;
 
     public RestaurantSystem() {
         this.om = OrderManager.getInstance();
-        initializePizzas();
+        this.menu = new HashMap<>();
+        this.ingredients = new HashMap<>();
+        this.customers = new HashMap<>();
+        this.ocount = 0;
+        initializeSystem();
     }
 
-    // initialize some pizzas
-    private void initializePizzas() {
-        // add some default pizzas to menu
-        Pizza p1 = new Pizza("Margherita", "MEDIUM", 8.99);
-        p1.var4 = "tomato,cheese,basil";
-        p_array[0] = p1;
-        p_count++;
-
-        Pizza p2 = new Pizza("Pepperoni", "MEDIUM", 10.99);
-        p2.var4 = "tomato,cheese,pepperoni";
-        p_array[1] = p2;
-        p_count++;
-
-        Pizza p3 = new Pizza("Spicy", "MEDIUM", 11.99);
-        p3.var4 = "tomato,cheese,jalapeno,chili";
-        p3.var5 = true;
-        p_array[2] = p3;
-        p_count++;
-
-        Pizza p4 = new Pizza("Hawaiian", "MEDIUM", 10.99);
-        p4.var4 = "tomato,cheese,pineapple,ham";
-        p_array[3] = p4;
-        p_count++;
-
-        Pizza p5 = new Pizza("Margherita", "LARGE", 11.99);
-        p5.var4 = "tomato,cheese,basil";
-        p_array[4] = p5;
-        p_count++;
-
-        Pizza p6 = new Pizza("Pepperoni", "LARGE", 13.99);
-        p6.var4 = "tomato,cheese,pepperoni";
-        p_array[5] = p6;
-        p_count++;
-
-        Pizza p7 = new Pizza("Spicy", "LARGE", 14.99);
-        p7.var4 = "tomato,cheese,jalapeno,chili";
-        p7.var5 = true;
-        p_array[6] = p7;
-        p_count++;
-
-        Pizza p8 = new Pizza("Hawaiian", "LARGE", 13.99);
-        p8.var4 = "tomato,cheese,pineapple,ham";
-        p_array[7] = p8;
-        p_count++;
-
-        Pizza p9 = new Pizza("Margherita", "SMALL", 5.99);
-        p9.var4 = "tomato,cheese,basil";
-        p_array[8] = p9;
-        p_count++;
-
-        Pizza p10 = new Pizza("Pepperoni", "SMALL", 6.99);
-        p10.var4 = "tomato,cheese,pepperoni";
-        p_array[9] = p10;
-        p_count++;
+    // Initialize ingredients and menu
+    private void initializeSystem() {
+        initializeIngredients();
+        initializeMenuPizzas();
     }
 
-    public void createOrder(String pizzaName, String size, String customerName, String address) {
-        // find pizza in menu
-        Pizza foundPizza = null;
-        for (int i = 0; i < p_count; i++) {
-            if (p_array[i].var1.equals(pizzaName) && p_array[i].var2.equals(size)) {
-                foundPizza = p_array[i];
-                break;
+    // Setup ingredients with costs
+    private void initializeIngredients() {
+        ingredients.put("tomato", new Ingredient("Tomato Sauce", 0.5));
+        ingredients.put("cheese", new Ingredient("Mozzarella", 1.0));
+        ingredients.put("basil", new Ingredient("Fresh Basil", 0.75));
+        ingredients.put("pepperoni", new Ingredient("Pepperoni", 1.5));
+        ingredients.put("pineapple", new Ingredient("Pineapple", 0.8));
+        ingredients.put("ham", new Ingredient("Ham", 1.2));
+        ingredients.put("jalapeno", new Ingredient("Jalapeno", 0.6));
+        ingredients.put("olive", new Ingredient("Black Olives", 0.9));
+        ingredients.put("mushroom", new Ingredient("Mushrooms", 0.7));
+        ingredients.put("onion", new Ingredient("Onions", 0.4));
+    }
+
+    // Build pizza menu with ingredients
+    private void initializeMenuPizzas() {
+        // Margherita variations
+        createMenuPizza("margherita_small", "Margherita", new PizzaSize("SMALL", 1.0, 20), 7.99,
+                new String[]{"tomato", "cheese", "basil"});
+        createMenuPizza("margherita_medium", "Margherita", new PizzaSize("MEDIUM", 1.0, 25), 9.99,
+                new String[]{"tomato", "cheese", "basil"});
+        createMenuPizza("margherita_large", "Margherita", new PizzaSize("LARGE", 1.3, 30), 12.99,
+                new String[]{"tomato", "cheese", "basil"});
+
+        // Pepperoni variations
+        createMenuPizza("pepperoni_small", "Pepperoni", new PizzaSize("SMALL", 1.0, 20), 8.99,
+                new String[]{"tomato", "cheese", "pepperoni"});
+        createMenuPizza("pepperoni_medium", "Pepperoni", new PizzaSize("MEDIUM", 1.0, 25), 10.99,
+                new String[]{"tomato", "cheese", "pepperoni"});
+        createMenuPizza("pepperoni_large", "Pepperoni", new PizzaSize("LARGE", 1.3, 30), 13.99,
+                new String[]{"tomato", "cheese", "pepperoni"});
+
+        // Supreme varieties
+        createMenuPizza("supreme_small", "Supreme", new PizzaSize("SMALL", 1.0, 20), 9.99,
+                new String[]{"tomato", "cheese", "pepperoni", "mushroom", "onion"});
+        createMenuPizza("supreme_medium", "Supreme", new PizzaSize("MEDIUM", 1.0, 25), 12.99,
+                new String[]{"tomato", "cheese", "pepperoni", "mushroom", "onion"});
+        createMenuPizza("supreme_large", "Supreme", new PizzaSize("LARGE", 1.3, 30), 15.99,
+                new String[]{"tomato", "cheese", "pepperoni", "mushroom", "onion"});
+
+        // Special hot pizza
+        createMenuPizza("spicy_medium", "Spicy Inferno", new PizzaSize("MEDIUM", 1.0, 25), 11.99,
+                new String[]{"tomato", "cheese", "jalapeno", "pepperoni"});
+    }
+
+    // Helper to create menu items
+    private void createMenuPizza(String key, String name, PizzaSize size, double basePrice, String[] ingList) {
+        Pizza p = new Pizza(name, size, basePrice);
+        for (String ingKey : ingList) {
+            if (ingredients.containsKey(ingKey)) {
+                p.addIng(ingredients.get(ingKey));
             }
         }
-
-        if (foundPizza != null) {
-            Pizza newPizza = new Pizza(foundPizza.var1, foundPizza.var2, foundPizza.var3);
-            newPizza.var4 = foundPizza.var4;
-            newPizza.var5 = foundPizza.var5;
-            newPizza.var7 = customerName;
-            newPizza.var6 = address;
-            newPizza.var8 = "RECEIVED";
-            om.addOrder(newPizza);
-            System.out.println("Order created successfully");
-        } else {
-            System.out.println("Pizza not found");
-        }
+        menu.put(key, p);
     }
 
-    public void createOrderWithCheese(String pizzaName, String size, String customerName, String address) {
-        // find pizza in menu
-        Pizza foundPizza = null;
-        for (int i = 0; i < p_count; i++) {
-            if (p_array[i].var1.equals(pizzaName) && p_array[i].var2.equals(size)) {
-                foundPizza = p_array[i];
-                break;
+    // Place order - this method has hidden complexity
+    public int placeOrder(String pizzaKey, String customerName, String address, String phone) {
+        return placeOrderWithOptions(pizzaKey, customerName, address, phone, false);
+    }
+
+    public int placeOrderWithHot(String pizzaKey, String customerName, String address, String phone) {
+        return placeOrderWithOptions(pizzaKey, customerName, address, phone, true);
+    }
+
+    private int placeOrderWithOptions(String pizzaKey, String customerName, String address, String phone, boolean makeHot) {
+        if (!menu.containsKey(pizzaKey)) {
+            System.out.println("Pizza not found in menu");
+            return -1;
+        }
+
+        Pizza menuPizza = menu.get(pizzaKey);
+        Pizza orderPizza = new Pizza(menuPizza.getN(), menuPizza.getSz(), menuPizza.getBp());
+        
+        // Copy ingredients (redundant logic)
+        for (Ingredient ing : menuPizza.getIng()) {
+            orderPizza.addIng(ing);
+        }
+        
+        orderPizza.setH(makeHot);
+
+        Customer cust = new Customer(customerName, address, phone);
+        if (customers.containsKey(customerName)) {
+            cust = customers.get(customerName);
+            cust.setA(address);
+        } else {
+            customers.put(customerName, cust);
+        }
+
+        int orderId = om.newOrder(orderPizza, cust);
+        System.out.println("Order placed successfully. Order ID: " + orderId);
+        return orderId;
+    }
+
+    // Process workflow - deeply nested conditions
+    public void processWorkflow(int orderId) {
+        if (om.validate(orderId)) {
+            if (om.getOrder(orderId) != null) {
+                if (om.getCustomer(orderId) != null) {
+                    System.out.println("Starting preparation...");
+                    om.prepareOrder(orderId);
+                    
+                    if (om.getStatus(orderId) == 1) {
+                        om.bakeOrder(orderId);
+                        
+                        if (om.getStatus(orderId) == 2) {
+                            om.qualityCheck(orderId);
+                            
+                            if (om.getStatus(orderId) == 3) {
+                                om.markReady(orderId);
+                                System.out.println("Pizza ready for delivery");
+                            } else {
+                                System.out.println("Quality check failed");
+                            }
+                        }
+                    }
+                } else {
+                    System.out.println("Customer not found");
+                }
+            } else {
+                System.out.println("Order not found");
             }
-        }
-
-        if (foundPizza != null) {
-            Pizza newPizza = new Pizza(foundPizza.var1, foundPizza.var2, foundPizza.var3);
-            newPizza.var4 = foundPizza.var4;
-            newPizza.var5 = foundPizza.var5;
-            newPizza.var7 = customerName;
-            newPizza.var6 = address;
-            newPizza.var10 = true; // extra cheese
-            newPizza.var8 = "RECEIVED";
-            om.addOrder(newPizza);
-            System.out.println("Order with extra cheese created successfully");
-        } else {
-            System.out.println("Pizza not found");
-        }
-    }
-
-    public void createSpicyOrder(String pizzaName, String size, String customerName, String address) {
-        // find pizza in menu
-        Pizza foundPizza = null;
-        for (int i = 0; i < p_count; i++) {
-            if (p_array[i].var1.equals(pizzaName) && p_array[i].var2.equals(size)) {
-                foundPizza = p_array[i];
-                break;
-            }
-        }
-
-        if (foundPizza != null) {
-            Pizza newPizza = new Pizza(foundPizza.var1, foundPizza.var2, foundPizza.var3);
-            newPizza.var4 = foundPizza.var4;
-            newPizza.var5 = true; // spicy
-            newPizza.var7 = customerName;
-            newPizza.var6 = address;
-            newPizza.var8 = "RECEIVED";
-            om.addOrder(newPizza);
-            System.out.println("Spicy order created successfully");
-        } else {
-            System.out.println("Pizza not found");
-        }
-    }
-
-    public void processOrder(int orderIndex) {
-        // check if order is valid
-        if (om.validateOrder(orderIndex)) {
-            om.updateOrderStatus(orderIndex, "PROCESSING");
-            System.out.println("Order is being processed");
         } else {
             System.out.println("Order validation failed");
         }
     }
 
-    public void deliverOrder(int orderIndex) {
-        // TODO: implement delivery logic
-        om.updateOrderStatus(orderIndex, "DELIVERED");
-    }
-
-    public void showMenu() {
-        System.out.println("=== PIZZA MENU ===");
-        for (int i = 0; i < p_count; i++) {
-            System.out.println(p_array[i].var1 + " (" + p_array[i].var2 + ") - $" + p_array[i].var3);
+    // Display menu with item codes
+    public void displayMenu() {
+        System.out.println("\n========== PIZZA MENU ==========");
+        String[] pizzaTypes = {"margherita_small", "margherita_medium", "margherita_large",
+                              "pepperoni_small", "pepperoni_medium", "pepperoni_large",
+                              "supreme_small", "supreme_medium", "supreme_large",
+                              "spicy_medium"};
+        
+        for (String key : pizzaTypes) {
+            if (menu.containsKey(key)) {
+                Pizza p = menu.get(key);
+                System.out.println("[" + key + "] - " + p.getN() + " (" + p.getSz().getS() + ") - $" + p.getBp());
+            }
         }
+        System.out.println("================================\n");
     }
 
-    public void showOrders() {
+    // Show orders with formatting
+    public void showAllOrders() {
+        System.out.println("\n========== ALL ORDERS ==========");
         om.printAllOrders();
+        System.out.println("================================\n");
     }
 
-    public double getOrderTotal(int orderIndex) {
-        return om.getTotalPrice(orderIndex);
+    // Interactive mode
+    public void startInteractiveMode() {
+        Scanner scanner = new Scanner(System.in);
+        boolean running = true;
+
+        System.out.println("Welcome to Pizza Ordering System");
+
+        while (running) {
+            System.out.println("\n1. View Menu");
+            System.out.println("2. Place Order");
+            System.out.println("3. View Orders");
+            System.out.println("4. Process Order");
+            System.out.println("5. Exit");
+            System.out.print("Select option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch(choice) {
+                case 1:
+                    displayMenu();
+                    break;
+                case 2:
+                    System.out.print("Enter pizza code: ");
+                    String pizzaCode = scanner.nextLine();
+                    System.out.print("Enter customer name: ");
+                    String custName = scanner.nextLine();
+                    System.out.print("Enter address: ");
+                    String addr = scanner.nextLine();
+                    System.out.print("Enter phone: ");
+                    String phone = scanner.nextLine();
+                    placeOrder(pizzaCode, custName, addr, phone);
+                    break;
+                case 3:
+                    showAllOrders();
+                    break;
+                case 4:
+                    System.out.print("Enter order ID: ");
+                    int orderId = scanner.nextInt();
+                    processWorkflow(orderId);
+                    break;
+                case 5:
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+        }
+        scanner.close();
     }
 
     public static void main(String[] args) {
         RestaurantSystem system = new RestaurantSystem();
-
-        system.showMenu();
-        System.out.println();
-
-        // create some orders
-        system.createOrder("Margherita", "MEDIUM", "John Doe", "123 Main St");
-        system.createOrderWithCheese("Pepperoni", "LARGE", "Jane Smith", "456 Oak Ave");
-        system.createSpicyOrder("Spicy", "MEDIUM", "Bob Johnson", "789 Pine Rd");
-
-        System.out.println();
-        system.showOrders();
-
-        // process an order
-        system.processOrder(0);
-        System.out.println("Total for order 0: $" + system.getOrderTotal(0));
+        
+        // Demo mode
+        System.out.println("=== PIZZA ORDERING SYSTEM DEMO ===\n");
+        
+        system.displayMenu();
+        
+        int order1 = system.placeOrder("margherita_medium", "John Doe", "123 Main St", "555-0001");
+        int order2 = system.placeOrder("pepperoni_large", "Jane Smith", "456 Oak Ave", "555-0002");
+        int order3 = system.placeOrderWithHot("spicy_medium", "Bob Johnson", "789 Pine Rd", "555-0003");
+        
+        system.showAllOrders();
+        
+        if (order1 >= 0) {
+            System.out.println("Processing order " + order1);
+            system.processWorkflow(order1);
+        }
+        
+        // Uncomment to start interactive mode
+        // system.startInteractiveMode();
     }
 }
