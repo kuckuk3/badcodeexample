@@ -736,6 +736,9 @@ double getTotalRevenue();
 
 Clients must implement/depend on all methods even if they only need a subset.
 
+
+etliche lehre methoden
+
 ### Dependency Inversion Principle (DIP) ❌
 
 High-level modules depend on low-level modules:
