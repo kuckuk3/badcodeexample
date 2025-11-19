@@ -1,4 +1,5 @@
-public class PaymentProcessor {
+
+public class PaymentProcessor implements PaymentHandler {
     private int tc = 0;
     private double[] amounts = new double[1000];
     private String[] methods = new String[1000];
@@ -8,9 +9,9 @@ public class PaymentProcessor {
     private static final double DELIVERY_SURCHARGE = 2.5;
     private static final double LOYALTY_DISCOUNT_THRESHOLD = 10;
     private static final double LOYALTY_DISCOUNT_PERCENT = 0.15;
+    private PaymentMethod currentPaymentMethod;
 
     public PaymentProcessor() {
-        // Initialize with default values
         for (int i = 0; i < 1000; i++) {
             amounts[i] = 0;
             methods[i] = "";
@@ -21,19 +22,21 @@ public class PaymentProcessor {
 
     public int processPayment(int orderId, String paymentMethod, double amount) {
         if (orderId < 0 || amount <= 0 || paymentMethod == null) {
-            return -1; // ERROR
+            return -1; 
         }
 
         OrderManager om = OrderManager.getInstance();
         
         if (!om.validate(orderId)) {
-            return 0; // INVALID_ORDER
+            return 0; 
         }
 
         if (paymentMethod.equalsIgnoreCase("CREDIT_CARD")) {
+            currentPaymentMethod = new CreditCardPayment();
             if (validateCreditCard(amount)) {
-                if (processCardPayment(amount)) {
-                    recordPayment(orderId, amount, paymentMethod);
+                double result = currentPaymentMethod.processPayment(amount);
+                if (result > 0 && processCardPayment(amount)) {
+                    recordPayment(orderId, result, paymentMethod);
                     return 1; // SUCCESS
                 } else {
                     return 2; // CARD_DECLINED
@@ -42,18 +45,29 @@ public class PaymentProcessor {
                 return 3; // INVALID_AMOUNT
             }
         } else if (paymentMethod.equalsIgnoreCase("CASH")) {
-            recordPayment(orderId, amount, paymentMethod);
-            return 1; // SUCCESS
+            currentPaymentMethod = new CashPayment();
+            try {
+                double result = currentPaymentMethod.processPayment(amount); // May throw!
+                recordPayment(orderId, result, paymentMethod);
+                return 1; // SUCCESS
+            } catch (IllegalArgumentException e) {
+                return 3; // INVALID_AMOUNT 
+            }
         } else if (paymentMethod.equalsIgnoreCase("PAYPAL")) {
+            currentPaymentMethod = new PayPalPayment();
             if (validatePayPal(amount)) {
-                recordPayment(orderId, amount, paymentMethod);
+                double result = currentPaymentMethod.processPayment(amount);
+                if (result < 0) {
+                    return 4; // PAYPAL_ERROR
+                }
+                recordPayment(orderId, result, paymentMethod);
                 return 1; // SUCCESS
             } else {
                 return 4; // PAYPAL_ERROR
             }
         }
 
-        return -2; // UNKNOWN_METHOD
+        return -2; 
     }
 
     private boolean validateCreditCard(double amount) {
@@ -61,11 +75,15 @@ public class PaymentProcessor {
     }
 
     private boolean processCardPayment(double amount) {
-        // Simulates payment processing
         return Math.random() > 0.05;
     }
 
     private boolean validatePayPal(double amount) {
+        return amount > 0;
+    }
+    
+    @Override
+    public boolean validateCash(double amount) {
         return amount > 0;
     }
 
@@ -146,11 +164,8 @@ public class PaymentProcessor {
         stats[transactionIndex] = "REFUNDED";
 
         if (reason.equalsIgnoreCase("CUSTOMER_REQUEST")) {
-            // Do something
         } else if (reason.equalsIgnoreCase("ORDER_CANCELLED")) {
-            // Do something else
         } else if (reason.equalsIgnoreCase("PAYMENT_ERROR")) {
-            // Do yet another thing
         }
 
         return true;
@@ -169,5 +184,39 @@ public class PaymentProcessor {
 
     public int getTotalTransactions() {
         return tc;
+    }
+    
+    @Override
+    public boolean sendEmailReceipt(int orderId, String emailAddress) {
+        return false; 
+    }
+    
+    @Override
+    public void sendPaymentConfirmation(int orderId) {
+    }
+    
+    @Override
+    public String exportToCSV() {
+        return ""; 
+    }
+    
+    @Override
+    public void exportTransactionsToFile(String filename) {
+    }
+    
+    @Override
+    public String generateMonthlyReport(int month, int year) {
+        return ""; 
+    }
+    
+    @Override
+    public double getTotalRevenue() {
+        double total = 0;   
+        for (int i = 0; i < tc; i++) {
+            if (stats[i].equals("PROCESSED")) {
+                total += amounts[i];
+            }
+        }
+        return total;
     }
 }

@@ -3,14 +3,14 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class RestaurantSystem {
-    private OrderManager om;
+    private OrderManager orderMgr;
     private Map<String, Pizza> menu;
     private Map<String, Ingredient> ingredients;
     private Map<String, Customer> customers;
     private int ocount;
 
     public RestaurantSystem() {
-        this.om = OrderManager.getInstance();
+        this.orderMgr = OrderManager.getInstance();
         this.menu = new HashMap<>();
         this.ingredients = new HashMap<>();
         this.customers = new HashMap<>();
@@ -111,26 +111,26 @@ public class RestaurantSystem {
             customers.put(customerName, cust);
         }
 
-        int orderId = om.newOrder(orderPizza, cust);
+        int orderId = orderMgr.newOrder(orderPizza, cust);
         System.out.println("Order placed successfully. Order ID: " + orderId);
         return orderId;
     }
 
     public void processWorkflow(int orderId) {
-        if (om.validate(orderId)) {
-            if (om.getOrder(orderId) != null) {
-                if (om.getCustomer(orderId) != null) {
+        if (orderMgr.validate(orderId)) {
+            if (orderMgr.getOrder(orderId) != null) {
+                if (orderMgr.getCustomer(orderId) != null) {
                     System.out.println("Starting preparation...");
-                    om.prepareOrder(orderId);
+                    orderMgr.prepareOrder(orderId);
                     
-                    if (om.getStatus(orderId) == 1) {
-                        om.bakeOrder(orderId);
+                    if (orderMgr.getStatus(orderId) == 1) {
+                        orderMgr.bakeOrder(orderId);
                         
-                        if (om.getStatus(orderId) == 2) {
-                            om.qualityCheck(orderId);
+                        if (orderMgr.getStatus(orderId) == 2) {
+                            orderMgr.qualityCheck(orderId);
                             
-                            if (om.getStatus(orderId) == 3) {
-                                om.markReady(orderId);
+                            if (orderMgr.getStatus(orderId) == 3) {
+                                orderMgr.markReady(orderId);
                                 System.out.println("Pizza ready for delivery");
                             } else {
                                 System.out.println("Quality check failed");
@@ -168,7 +168,7 @@ public class RestaurantSystem {
     // Show orders with formatting
     public void showAllOrders() {
         System.out.println("\n========== ALL ORDERS ==========");
-        om.printAllOrders();
+        orderMgr.printAllOrders();
         System.out.println("================================\n");
     }
 

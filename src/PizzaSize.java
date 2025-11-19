@@ -1,35 +1,35 @@
 public class PizzaSize {
-    private String s;
-    private double m;
-    private int d;
+    private String sizeLabel;
+    private double priceMultiplier;
+    private int diameterCm;
 
-    public PizzaSize(String s, double m, int d) {
-        this.s = s;
-        this.m = m;
-        this.d = d;
+    public PizzaSize(String sizeLabel, double priceMultiplier, int diameterCm) {
+        this.sizeLabel = sizeLabel;
+        this.priceMultiplier = priceMultiplier;
+        this.diameterCm = diameterCm;
     }
 
     public String getS() {
-        return s;
+        return sizeLabel;
     }
 
     public double getM() {
-        return m;
+        return priceMultiplier;
     }
 
     public int getD() {
-        return d;
+        return diameterCm;
     }
 
-    public void setS(String s) {
-        this.s = s;
+    public void setS(String sizeLabel) {
+        this.sizeLabel = sizeLabel;
     }
 
-    public void setM(double m) {
-        this.m = m;
+    public void setM(double priceMultiplier) {
+        this.priceMultiplier = priceMultiplier;
     }
 
-    public void setD(int d) {
-        this.d = d;
+    public void setD(int diameterCm) {
+        this.diameterCm = diameterCm;
     }
 }

@@ -1,73 +1,73 @@
 public class Pizza {
-    private String n;
-    private PizzaSize sz;
-    private double bp;
-    private Ingredient[] ing;
+    private String pizzaName;
+    private PizzaSize pizzaSize;
+    private double basePrice;
+    private Ingredient[] ingredientList;
     private int ingCount;
-    private boolean h;
-    private long cr;
-    private String st;
-    private int pt;
+    private boolean isHot;
+    private long createdTime;
+    private String pizzaStatus;
+    private int prepTime;
 
-    public Pizza(String n, PizzaSize sz, double bp) {
-        this.n = n;
-        this.sz = sz;
-        this.bp = bp;
-        this.ing = new Ingredient[20];
+    public Pizza(String pizzaName, PizzaSize pizzaSize, double basePrice) {
+        this.pizzaName = pizzaName;
+        this.pizzaSize = pizzaSize;
+        this.basePrice = basePrice;
+        this.ingredientList = new Ingredient[20];
         this.ingCount = 0;
-        this.h = false;
-        this.cr = System.currentTimeMillis();
-        this.st = "PENDING";
-        this.pt = 0;
+        this.isHot = false;
+        this.createdTime = System.currentTimeMillis();
+        this.pizzaStatus = "PENDING";
+        this.prepTime = 0;
     }
 
     public String getN() {
-        return n;
+        return pizzaName;
     }
 
-    public void setN(String n) {
-        this.n = n;
+    public void setN(String pizzaName) {
+        this.pizzaName = pizzaName;
     }
 
     public PizzaSize getSz() {
-        return sz;
+        return pizzaSize;
     }
 
     public double getBp() {
-        return bp;
+        return basePrice;
     }
 
-    public void setBp(double bp) {
-        this.bp = bp;
+    public void setBp(double basePrice) {
+        this.basePrice = basePrice;
     }
 
     public boolean isH() {
-        return h;
+        return isHot;
     }
 
-    public void setH(boolean h) {
-        this.h = h;
+    public void setH(boolean isHot) {
+        this.isHot = isHot;
     }
 
     public String getSt() {
-        return st;
+        return pizzaStatus;
     }
 
-    public void setSt(String st) {
-        this.st = st;
+    public void setSt(String pizzaStatus) {
+        this.pizzaStatus = pizzaStatus;
     }
 
     public int getPt() {
-        return pt;
+        return prepTime;
     }
 
-    public void setPt(int pt) {
-        this.pt = pt;
+    public void setPt(int prepTime) {
+        this.prepTime = prepTime;
     }
 
     public void addIng(Ingredient i) {
-        if (ingCount < ing.length) {
-            ing[ingCount] = i;
+        if (ingCount < ingredientList.length) {
+            ingredientList[ingCount] = i;
             ingCount++;
         }
     }
@@ -75,31 +75,31 @@ public class Pizza {
     public Ingredient[] getIng() {
         Ingredient[] result = new Ingredient[ingCount];
         for (int i = 0; i < ingCount; i++) {
-            result[i] = ing[i];
+            result[i] = ingredientList[i];
         }
         return result;
     }
 
     // Calculate total price with ingredients and size multiplier
     public double calculateFinalPrice() {
-        double result = bp;
+        double result = basePrice;
         
         // Apply size multiplier
-        if (sz.getS().equals("LARGE")) {
-            result = result * sz.getM();
-        } else if (sz.getS().equals("MEDIUM")) {
+        if (pizzaSize.getS().equals("LARGE")) {
+            result = result * pizzaSize.getM();
+        } else if (pizzaSize.getS().equals("MEDIUM")) {
             result = result * 1.0;
-        } else if (sz.getS().equals("SMALL")) {
+        } else if (pizzaSize.getS().equals("SMALL")) {
             result = result * 0.75;
         }
         
         // Add ingredient costs
         for (int i = 0; i < ingCount; i++) {
-            result = result + ing[i].getC();
+            result = result + ingredientList[i].getC();
         }
         
         // Hot pizza surcharge
-        if (h) {
+        if (isHot) {
             result = result * 1.1;
         }
         
@@ -110,7 +110,7 @@ public class Pizza {
     public boolean verifyIngredients() {
         boolean allGood = true;
         for (int i = 0; i < ingCount; i++) {
-            if (!ing[i].checkAvailability()) {
+            if (!ingredientList[i].checkAvailability()) {
                 allGood = false;
                 break;
             }
@@ -121,40 +121,40 @@ public class Pizza {
     // Reduce ingredient stock
     public void consumeIngredients() {
         for (int i = 0; i < ingCount; i++) {
-            if (ing[i].isA()) {
-                ing[i].reduceS((int)sz.getD());
+            if (ingredientList[i].isA()) {
+                ingredientList[i].reduceS((int)pizzaSize.getD());
             }
         }
     }
 
     public String getSummary() {
-        String result = "Pizza: " + n + "\n";
-        result = result + "Size: " + sz.getS() + "\n";
-        result = result + "Base Price: $" + bp + "\n";
+        String result = "Pizza: " + pizzaName + "\n";
+        result = result + "Size: " + pizzaSize.getS() + "\n";
+        result = result + "Base Price: $" + basePrice + "\n";
         result = result + "Ingredients: ";
         for (int i = 0; i < ingCount; i++) {
-            result = result + ing[i].getNm();
+            result = result + ingredientList[i].getNm();
             if (i < ingCount - 1) result = result + ", ";
         }
         result = result + "\n";
-        result = result + "Status: " + st + "\n";
+        result = result + "Status: " + pizzaStatus + "\n";
         result = result + "Final Price: $" + calculateFinalPrice() + "\n";
         return result;
     }
 
     public String getFullDetails() {
         String output = "========== PIZZA DETAILS ==========\n";
-        output = output + "Name: " + n + "\n";
-        output = output + "Size: " + sz.getS() + " (Diameter: " + sz.getD() + "cm)\n";
-        output = output + "Base Price: $" + bp + "\n";
+        output = output + "Name: " + pizzaName + "\n";
+        output = output + "Size: " + pizzaSize.getS() + " (Diameter: " + pizzaSize.getD() + "cm)\n";
+        output = output + "Base Price: $" + basePrice + "\n";
         output = output + "Ingredients Count: " + ingCount + "\n";
         for (int j = 0; j < ingCount; j++) {
-            output = output + "  - " + ing[j].getNm() + " ($" + ing[j].getC() + ")\n";
+            output = output + "  - " + ingredientList[j].getNm() + " ($" + ingredientList[j].getC() + ")\n";
         }
-        output = output + "Hot & Fresh: " + (h ? "Yes" : "No") + "\n";
-        output = output + "Status: " + st + "\n";
-        output = output + "Preparation Time: " + pt + " minutes\n";
-        output = output + "Created: " + new java.util.Date(cr) + "\n";
+        output = output + "Hot & Fresh: " + (isHot ? "Yes" : "No") + "\n";
+        output = output + "Status: " + pizzaStatus + "\n";
+        output = output + "Preparation Time: " + prepTime + " minutes\n";
+        output = output + "Created: " + new java.util.Date(createdTime) + "\n";
         output = output + "Total: $" + calculateFinalPrice() + "\n";
         output = output + "===================================\n";
         return output;

@@ -6,14 +6,19 @@ This is an intentionally poorly written pizza ordering system that demonstrates 
 ## Structure
 
 ### Files Created:
-1. **Pizza.java** - Main pizza class
-2. **PizzaSize.java** - Pizza size information
-3. **Customer.java** - Customer data
-4. **Ingredient.java** - Ingredient details
-5. **OrderManager.java** - Order management (singleton)
-6. **DeliveryHandler.java** - Delivery scheduling
-7. **PaymentProcessor.java** - Payment processing
-8. **RestaurantSystem.java** - Main system orchestrator
+1. **Pizza.java** - Main pizza class (refactored naming)
+2. **PizzaSize.java** - Pizza size information (refactored naming)
+3. **Customer.java** - Customer data (refactored naming)
+4. **Ingredient.java** - Ingredient details (refactored naming)
+5. **OrderManager.java** - Order management (singleton, refactored naming)
+6. **DeliveryHandler.java** - Delivery scheduling (singleton, refactored naming)
+7. **PaymentMethod.java** - Abstract base class for payment types
+8. **PaymentHandler.java** - Interface for payment processing
+9. **PaymentProcessor.java** - Payment processing (implements PaymentHandler)
+10. **CashPayment.java** - Concrete implementation for cash payments
+11. **CreditCardPayment.java** - Concrete implementation for credit card payments
+12. **PayPalPayment.java** - Concrete implementation for PayPal payments
+13. **RestaurantSystem.java** - Main system orchestrator (refactored naming)
 
 ## Anti-Patterns Demonstrated
 
@@ -44,30 +49,34 @@ This is an intentionally poorly written pizza ordering system that demonstrates 
 
 ### 2. Bad Naming Conventions
 
-| Bad Name | What it Actually Is |
-|----------|-------------------|
-| `n` | name |
-| `sz` | size |
-| `bp` | basePrice |
-| `ing` | ingredients |
-| `cr` | createdAt |
-| `st` | status |
-| `pt` | preparationTime |
-| `m` | multiplier |
-| `d` | diameter |
-| `a` | available |
-| `s` | stock |
-| `p` | phone/pizza (context dependent!) |
-| `e` | email |
-| `lc` | loyaltyCount |
-| `tpr` | totalPriceRun |
-| `dh` | deliveryHandler |
-| `dIds` | deliveryIds |
-| `dTimes` | deliveryTimes |
-| `dStatuses` | deliveryStatuses |
-| `dc` | deliveryCount |
-| `tc` | transactionCount |
-| `om` | orderManager |
+| Bad Name | What it Actually Is | Class |
+|----------|-------------------|-------|
+| `n` | name | Pizza, Customer, Ingredient |
+| `sz` | size | Pizza |
+| `bp` | basePrice | Pizza |
+| `ing` | ingredients | Pizza |
+| `cr` | createdAt | Pizza |
+| `st` | status | Pizza |
+| `pt` | preparationTime | Pizza |
+| `m` | multiplier | PizzaSize |
+| `d` | diameter | PizzaSize |
+| `a` | available | Ingredient |
+| `s` | stock/size | Ingredient, PizzaSize |
+| `p` | phone/pizza | Customer |
+| `e` | email | Customer |
+| `lc` | loyaltyCount | Customer |
+| `tpr` | totalPriceRun | Customer |
+| `om` | orderManager | OrderManager, RestaurantSystem |
+| `cm` | customerMap | OrderManager |
+| `tm` | timestampMap | OrderManager |
+| `odc` | orderCounter | OrderManager |
+| `dIds` | deliveryIds | DeliveryHandler |
+| `dTimes` | deliveryTimes | DeliveryHandler |
+| `dStatuses` | deliveryStatuses | DeliveryHandler |
+| `dc` | deliveryCount | DeliveryHandler |
+| `tc` | transactionCount | PaymentProcessor |
+
+**Anti-Pattern:** Method names like `getN()`, `setN()`, `getA()`, `setA()` with abbreviated method names combined with abbreviated field names make code hard to understand.
 
 ### 3. Bad Comments
 
@@ -244,4 +253,4 @@ if (p.getN() == null || p.getN().trim().isEmpty()) return false;
    - Add examples for complex logic
 
 ## Compilation Status
-✓ All files compile (with intentional warnings for unused variables)
+✓ All files compile successfully (with expected unused variable warnings for `ocount`)

@@ -1,48 +1,48 @@
 public class Ingredient {
-    private String nm;
-    private double c;
-    private boolean a;
-    private int s;
+    private String ingredientName;
+    private double unitCost;
+    private boolean isAvailable;
+    private int stockLevel;
 
-    public Ingredient(String nm, double c) {
-        this.nm = nm;
-        this.c = c;
-        this.a = true;
-        this.s = 100;
+    public Ingredient(String ingredientName, double unitCost) {
+        this.ingredientName = ingredientName;
+        this.unitCost = unitCost;
+        this.isAvailable = true;
+        this.stockLevel = 100;
     }
 
     public String getNm() {
-        return nm;
+        return ingredientName;
     }
 
     public double getC() {
-        return c;
+        return unitCost;
     }
 
     public boolean isA() {
-        return a;
+        return isAvailable;
     }
 
-    public void setA(boolean a) {
-        this.a = a;
+    public void setA(boolean isAvailable) {
+        this.isAvailable = isAvailable;
     }
 
     public int getS() {
-        return s;
+        return stockLevel;
     }
 
-    public void setS(int s) {
-        this.s = s;
+    public void setS(int stockLevel) {
+        this.stockLevel = stockLevel;
     }
 
     public void reduceS(int amount) {
-        s -= amount;
-        if (s < 0) s = 0;
+        stockLevel -= amount;
+        if (stockLevel < 0) stockLevel = 0;
     }
 
     public boolean checkAvailability() {
         // checks if ingredient is available
-        if (a && s > 0) {
+        if (isAvailable && stockLevel > 0) {
             return true;
         }
         return false;

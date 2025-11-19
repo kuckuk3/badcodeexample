@@ -1,46 +1,46 @@
 public class DeliveryHandler {
-    private static DeliveryHandler dh = null;
-    private int[] dIds = new int[1000];
-    private int[] dTimes = new int[1000];
-    private String[] dStatuses = new String[1000];
-    private int dc = 0;
-    private OrderManager om;
+    private static DeliveryHandler instance = null;
+    private int[] deliveryOrderIds = new int[1000];
+    private int[] deliveryMinutes = new int[1000];
+    private String[] deliveryStatuses = new String[1000];
+    private int deliveryCount = 0;
+    private OrderManager orderMgr;
 
     private DeliveryHandler() {
-        this.om = OrderManager.getInstance();
+        this.orderMgr = OrderManager.getInstance();
     }
 
     public static DeliveryHandler getInstance() {
-        if (dh == null) {
-            dh = new DeliveryHandler();
+        if (instance == null) {
+            instance = new DeliveryHandler();
         }
-        return dh;
+        return instance;
     }
 
     public void scheduleDelivery(int orderId, int estimatedMinutes) {
-        dIds[dc] = orderId;
-        dTimes[dc] = estimatedMinutes;
-        dStatuses[dc] = "SCHEDULED";
-        dc++;
+        deliveryOrderIds[deliveryCount] = orderId;
+        deliveryMinutes[deliveryCount] = estimatedMinutes;
+        deliveryStatuses[deliveryCount] = "SCHEDULED";
+        deliveryCount++;
     }
 
     public boolean assignDriver(int deliveryIndex, String driverName) {
-        if (deliveryIndex < 0 || deliveryIndex >= dc) {
+        if (deliveryIndex < 0 || deliveryIndex >= deliveryCount) {
             return false;
         }
         if (driverName == null || driverName.isEmpty()) {
             return false;
         }
-        if (dStatuses[deliveryIndex].equals("SCHEDULED")) {
-            dStatuses[deliveryIndex] = "ASSIGNED";
+        if (deliveryStatuses[deliveryIndex].equals("SCHEDULED")) {
+            deliveryStatuses[deliveryIndex] = "ASSIGNED";
             return true;
         }
         return false;
     }
 
     public double calculateDeliveryFee(int orderId) {
-        Pizza p = om.getOrder(orderId);
-        Customer c = om.getCustomer(orderId);
+        Pizza p = orderMgr.getOrder(orderId);
+        Customer c = orderMgr.getCustomer(orderId);
         
         if (p == null || c == null) {
             return 0;
@@ -68,17 +68,17 @@ public class DeliveryHandler {
     }
 
     public void processDeliveries() {
-        for (int i = 0; i < dc; i++) {
-            if (dStatuses[i] != null) {
-                if (dStatuses[i].equals("ASSIGNED")) {
-                    for (int j = 0; j < dTimes[i]; j++) {
+        for (int i = 0; i < deliveryCount; i++) {
+            if (deliveryStatuses[i] != null) {
+                if (deliveryStatuses[i].equals("ASSIGNED")) {
+                    for (int j = 0; j < deliveryMinutes[i]; j++) {
                         // simulate delivery time passing
-                        if (j == dTimes[i] - 1) {
-                            dStatuses[i] = "IN_TRANSIT";
-                            if (om.validate(dIds[i])) {
-                                if (om.getStatus(dIds[i]) == 4) {
-                                    om.deliver(dIds[i]);
-                                    dStatuses[i] = "DELIVERED";
+                        if (j == deliveryMinutes[i] - 1) {
+                            deliveryStatuses[i] = "IN_TRANSIT";
+                            if (orderMgr.validate(deliveryOrderIds[i])) {
+                                if (orderMgr.getStatus(deliveryOrderIds[i]) == 4) {
+                                    orderMgr.deliver(deliveryOrderIds[i]);
+                                    deliveryStatuses[i] = "DELIVERED";
                                 }
                             }
                         }
@@ -90,27 +90,27 @@ public class DeliveryHandler {
 
     public int[] getDeliveryInfo(int index) {
         int[] info = new int[3];
-        info[0] = dIds[index];
-        info[1] = dTimes[index];
+        info[0] = deliveryOrderIds[index];
+        info[1] = deliveryMinutes[index];
         // info[2] would be status but we're using String array instead
         return info;
     }
 
     public String checkStuff(int index) {
         String result = "";
-        result = result + "Order ID: " + dIds[index] + "\n";
-        result = result + "Time: " + dTimes[index] + "\n";
-        result = result + "Status: " + dStatuses[index] + "\n";
+        result = result + "Order ID: " + deliveryOrderIds[index] + "\n";
+        result = result + "Time: " + deliveryMinutes[index] + "\n";
+        result = result + "Status: " + deliveryStatuses[index] + "\n";
         return result;
     }
 
     public int getTotalDeliveries() {
-        return dc;
+        return deliveryCount;
     }
 
     public boolean validateForDelivery(int orderId) {
-        Pizza p = om.getOrder(orderId);
-        Customer c = om.getCustomer(orderId);
+        Pizza p = orderMgr.getOrder(orderId);
+        Customer c = orderMgr.getCustomer(orderId);
         
         if (p == null || c == null) return false;
         if (p.getN() == null || p.getN().trim().isEmpty()) return false;
@@ -121,14 +121,14 @@ public class DeliveryHandler {
     }
 
     public String getDeliveryStatus(int index) {
-        if (index >= 0 && index < dc) {
-            return dStatuses[index];
+        if (index >= 0 && index < deliveryCount) {
+            return deliveryStatuses[index];
         }
         return "UNKNOWN";
     }
 
     public void estimateDeliveryTime(int orderId, int baseMinutes) {
-        Pizza p = om.getOrder(orderId);
+        Pizza p = orderMgr.getOrder(orderId);
         
         int finalTime = baseMinutes;
         

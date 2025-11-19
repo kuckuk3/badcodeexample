@@ -1,77 +1,77 @@
 public class Customer {
-    private String n;
-    private String a;
-    private String p;
-    private String e;
-    private int lc;
-    private double tpr;
+    private String customerName;
+    private String address;
+    private String phoneNum;
+    private String emailAddr;
+    private int loyaltyCount;
+    private double totalSpent;
 
-    public Customer(String n, String a, String p) {
-        this.n = n;
-        this.a = a;
-        this.p = p;
-        this.e = "";
-        this.lc = 0;
-        this.tpr = 0.0;
+    public Customer(String customerName, String address, String phoneNum) {
+        this.customerName = customerName;
+        this.address = address;
+        this.phoneNum = phoneNum;
+        this.emailAddr = "";
+        this.loyaltyCount = 0;
+        this.totalSpent = 0.0;
     }
 
     public String getN() {
-        return n;
+        return customerName;
     }
 
-    public void setN(String n) {
-        this.n = n;
+    public void setN(String customerName) {
+        this.customerName = customerName;
     }
 
     public String getA() {
-        return a;
+        return address;
     }
 
-    public void setA(String a) {
-        this.a = a;
+    public void setA(String address) {
+        this.address = address;
     }
 
     public String getP() {
-        return p;
+        return phoneNum;
     }
 
-    public void setP(String p) {
-        this.p = p;
+    public void setP(String phoneNum) {
+        this.phoneNum = phoneNum;
     }
 
     public String getE() {
-        return e;
+        return emailAddr;
     }
 
-    public void setE(String e) {
-        this.e = e;
+    public void setE(String emailAddr) {
+        this.emailAddr = emailAddr;
     }
 
     public int getLc() {
-        return lc;
+        return loyaltyCount;
     }
 
-    public void setLc(int lc) {
-        this.lc = lc;
+    public void setLc(int loyaltyCount) {
+        this.loyaltyCount = loyaltyCount;
     }
 
     public double getTpr() {
-        return tpr;
+        return totalSpent;
     }
 
-    public void setTpr(double tpr) {
-        this.tpr = tpr;
+    public void setTpr(double totalSpent) {
+        this.totalSpent = totalSpent;
     }
 
     public void incLc() {
-        lc++;
+        loyaltyCount++;
     }
 
     public void addTpr(double amount) {
-        tpr += amount;
+        totalSpent += amount;
     }
 
     public String getInfo() {
-        return n + "|" + a + "|" + p + "|" + e + "|" + lc + "|" + tpr;
+        return customerName + "|" + address + "|" + phoneNum + "|" + emailAddr + "|" + loyaltyCount + "|" + totalSpent;
     }
 }
