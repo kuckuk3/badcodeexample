@@ -4,7 +4,7 @@
 │  ☐ SRP                   │  ☐ Schlechte          │  ☐ Schlechte            │
 │    Single Responsibility │    Namen               │    Kommentare            │
 │    Principle             │                        │                          │
-│                          │                        │                          │
+│                          │ verschiedene                       │ (payment Method)                         │
 ├──────────────────────────┼────────────────────────┼──────────────────────────┤
 │                          │                        │                          │
 │  ☐ OCP                   │  ☐ DRY                │  ☐ KISS                 │
