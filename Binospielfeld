@@ -1,9 +1,9 @@
 
 ┌──────────────────────────┬────────────────────────┬──────────────────────────┐
 │                          │                        │                          │
-│  ☐ SRP                  │  ☐ Schlechte           │  ☐ Schlechte            │
-│    Single Responsibility │    Namen               │    Kommentare            │
-│    Principle             │                        │                          │
+│  ☐ SRP                  │  ☐ ISP                  │  ☐ Schlechte            │
+│    Single Responsibility │  Interface Segregation │    Kommentare            │
+│    Principle             │  Principle             │                          │
 │                          │                        │                          │
 ├──────────────────────────┼────────────────────────┼──────────────────────────┤
 │                          │                        │                          │
@@ -13,9 +13,9 @@
 │                          │                        │                          │
 ├──────────────────────────┼────────────────────────┼──────────────────────────┤
 │                          │                        │                          │
-│  ☐ LSP                  │ ☐ ISP                  │  ☐ Dependency Inverion  │
-│    Liskov Substitution   │   Interface Segregation│                          │
-│    Principle             │   Principle            │                          │
+│  ☐ LSP                  │ ☐  Schlechte            │  ☐ Dependency Inverion  │
+│    Liskov Substitution   │   Namen                │                          │
+│    Principle             │                        │                          │
 │                          │                        │                          │
 ├──────────────────────────┼────────────────────────┼──────────────────────────┤
 
